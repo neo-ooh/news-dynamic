@@ -1,0 +1,6 @@
+{
+  "news.no-headline": "Pas de titre disponible",
+  "news.updated-at": "Mis à jour",
+  "news.updated-just-now": "À l'instant",
+  "news.updated-x-hours-ago": "Il y a {hours} heures"
+}

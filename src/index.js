@@ -1,12 +1,40 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import * as serviceWorker from './serviceWorker'
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// LOCALIZATIONS
+import {IntlProvider, addLocaleData} from 'react-intl'
+import fr from 'react-intl/locale-data/fr'
+import en from 'react-intl/locale-data/en'
+import frenchMessages from './assets/locales/fr-CA'
+import englishMessages from './assets/locales/en-CA'
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// ENV
+import {config} from 'dotenv'
+
+config()
+
+const messages = {
+  'fr-FR': frenchMessages,
+  'fr-CA': frenchMessages,
+  'en-CA': englishMessages,
+}
+
+addLocaleData([...fr, ...en])
+
+//
+// GO REACT
+ReactDOM.render(
+  <IntlProvider
+    locale={navigator.language}
+    messages={messages[navigator.language]}>
+    <App/>
+  </IntlProvider>, document.getElementById('root'))
+
+// Register, or not if dev, the service worker
+if(process.env.REACT_APP_ENV === 'development') {
+  serviceWorker.unregister();
+} else {
+  serviceWorker.register();
+}

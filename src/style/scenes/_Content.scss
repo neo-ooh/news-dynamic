@@ -1,0 +1,130 @@
+#news-content {
+  position: absolute;
+  overflow: hidden;
+
+  background-color: #00374e;
+
+  transition: $default-transition;
+
+  .image {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .headline {
+    font-weight: bold;
+
+    span {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1.3;
+    }
+  }
+
+  &.FCL {
+    width: 1920px;
+    height: 1080px;
+
+    top: 0;
+    left: 1920px;
+
+    transition-property: opacity;
+
+    .image {
+      width: 1920px;
+      height: 800px;
+    }
+
+    .headline {
+      &.full {
+        height: 800px;
+        margin: 0 125px 0 125px;
+
+        font-size: 80pt;
+        line-height: 800px;
+
+        &.long-text {
+          font-size: 65pt;
+        }
+      }
+
+      &.ribbon {
+        height: 280px;
+        margin: 0 100px;
+
+        font-size: 45pt;
+        line-height: 280px;
+
+        &.long-text {
+          margin: 0 5px;
+          font-size: 35pt;
+        }
+      }
+    }
+
+    &.transition-article-appear,
+    &.transition-article-enter {
+      opacity: 0;
+
+      &.transition-article-appear-active,
+      &.transition-article-enter-active {
+        opacity: 1;
+      }
+    }
+
+    &.transition-article-leave {
+      opacity: 1;
+
+      &.transition-article-leave-active {
+        opacity: 0;
+      }
+    }
+  }
+
+  &.DCA {
+    width: 1080px;
+    height: 1390px;
+
+    top: 400px;
+    left: 0;
+
+    transition-property: left;
+
+    .image {
+      width: 1080px;
+      height: 740px;
+    }
+
+    .headline {
+      &.ribbon {
+        height: 650px;
+        margin: 0 65px;
+
+        font-size: 50pt;
+        line-height: 650px;
+
+        &.long-text {
+          font-size: 40pt;
+        }
+      }
+    }
+  }
+
+  &.transition-article-appear,
+  &.transition-article-enter {
+    left: 1080px;
+
+    &.transition-article-appear-active,
+    &.transition-article-enter-active {
+      left: 0px;
+    }
+  }
+
+  &.transition-article-leave {
+    left: 0px;
+
+    &.transition-article-leave-active {
+      left: -1080px;
+    }
+  }
+}

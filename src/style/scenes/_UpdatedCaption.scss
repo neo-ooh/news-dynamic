@@ -1,0 +1,50 @@
+#update-caption {
+  position: absolute;
+
+  text-transform: uppercase;
+
+  transition: $default-transition;
+  transition-property: opacity;
+
+  &.transition-article-appear,
+  &.transition-article-enter {
+    opacity: 0;
+
+    &.transition-article-appear-active,
+    &.transition-article-enter-active {
+      opacity: 1;
+    }
+  }
+
+  &.FCL {
+    top: 875px;
+    left: 1240px;
+
+    font-size: 30pt;
+
+
+    .label {
+      font-weight: 300;
+    }
+
+    .time {
+      font-weight: 600;
+    }
+  }
+
+  &.DCA {
+    top: 270px;
+    left: 630px;
+
+    font-size: 30pt;
+    color: #000;
+
+    .label {
+      font-weight: 300;
+    }
+
+    .time {
+      font-weight: 600;
+    }
+  }
+}
