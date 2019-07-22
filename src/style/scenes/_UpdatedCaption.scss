@@ -16,6 +16,14 @@
     }
   }
 
+  &.transition-article-leave {
+    opacity: 1;
+
+    &.transition-article-leave-active {
+      opacity: 0;
+    }
+  }
+
   &.FCL {
     top: 875px;
     left: 1240px;

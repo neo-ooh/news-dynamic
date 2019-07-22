@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { injectIntl, FormattedMessage } from "react-intl";
 
 class Content extends Component {
   render() {
+    if(this.props.headline === null)
+      return null
+
     const headlineStyle = this.props.image ? 'ribbon' : 'full'
     const textSize = this.props.headline.length > 150 ? 'long-text' : ''
 
@@ -20,10 +22,8 @@ class Content extends Component {
 }
 
 Content.defaultProps = {
-  headline: <FormattedMessage id="news.no-headline"
-                              defaultMessage="No headline available"
-                              description="Tell the user no headline has been provided to the Content scene"/>,
+  headline: null,
   image: null
 }
 
-export default injectIntl(Content)
+export default Content

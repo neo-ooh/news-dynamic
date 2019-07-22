@@ -2,8 +2,6 @@
   position: absolute;
   overflow: hidden;
 
-  background-color: #00374e;
-
   transition: $default-transition;
 
   .image {
@@ -32,7 +30,7 @@
 
     .image {
       width: 1920px;
-      height: 800px;
+      height: 810px;
     }
 
     .headline {
@@ -49,7 +47,7 @@
       }
 
       &.ribbon {
-        height: 280px;
+        height: 270px;
         margin: 0 100px;
 
         font-size: 45pt;
@@ -92,39 +90,39 @@
 
     .image {
       width: 1080px;
-      height: 740px;
+      height: 755px;
     }
 
     .headline {
       &.ribbon {
-        height: 650px;
+        height: 657px;
         margin: 0 65px;
 
         font-size: 50pt;
-        line-height: 650px;
+        line-height: 657px;
 
         &.long-text {
           font-size: 40pt;
         }
       }
     }
-  }
 
-  &.transition-article-appear,
-  &.transition-article-enter {
-    left: 1080px;
+    &.transition-article-appear,
+    &.transition-article-enter {
+      left: 1080px;
 
-    &.transition-article-appear-active,
-    &.transition-article-enter-active {
-      left: 0px;
+      &.transition-article-appear-active,
+      &.transition-article-enter-active {
+        left: 0px;
+      }
     }
-  }
 
-  &.transition-article-leave {
-    left: 0px;
+    &.transition-article-leave {
+      left: 0px;
 
-    &.transition-article-leave-active {
-      left: -1080px;
+      &.transition-article-leave-active {
+        left: -1080px;
+      }
     }
   }
 }

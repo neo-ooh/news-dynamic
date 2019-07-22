@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import { injectIntl } from "react-intl";
 import messages from '../library/messages'
+import moment from 'moment-timezone'
 
 class UpdateCaption extends Component {
   render() {
-    const now = new Date()
-    const articleAge = Math.abs(now - this.props.articleTime) / 36e5; // 36e5 = 360000 = 60*60*1000
+    if(this.props.articleTime === null)
+      return null
+
+    const now = moment()
+    const articleAge = moment.duration(Math.abs(now.diff(this.props.articleTime))).asHours();
 
     // If article is a bit old, do not show its age
     if(articleAge > 6)
@@ -20,15 +24,11 @@ class UpdateCaption extends Component {
           { this.props.intl.formatMessage(messages.updatedAt) }
         </span><br />
         <span className="time">
-          { this.props.intl.formatMessage(message, {hours: 6}) }
+          { this.props.intl.formatMessage(message, {hours: Math.floor(articleAge)}) }
         </span>
       </section>
     )
   }
-}
-
-UpdateCaption.defaultProps = {
-  articleTime: new Date()
 }
 
 export default injectIntl(UpdateCaption)

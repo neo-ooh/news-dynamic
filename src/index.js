@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
+import ErrorBoundary from './scenes/ErrorBoundary'
 import App from './App'
+
 import * as serviceWorker from './serviceWorker'
 
 // LOCALIZATIONS
@@ -29,7 +32,9 @@ ReactDOM.render(
   <IntlProvider
     locale={navigator.language}
     messages={messages[navigator.language]}>
-    <App/>
+    <ErrorBoundary>
+      <App/>
+    </ErrorBoundary>
   </IntlProvider>, document.getElementById('root'))
 
 // Register, or not if dev, the service worker

@@ -1,0 +1,47 @@
+#error-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100vw;
+    max-width: 1920px;
+    height: 100vh;
+    text-align: center;
+    background-color: #FFF;
+
+    h1 {
+        margin: 280px auto 0;
+        font-size: 140pt;
+    }
+
+    h3 {
+        margin-top: -30px;
+        font-size: 80pt;
+        color: #ff4a60;
+    }
+
+    h5 {
+        font-size: 30pt;
+        font-style: italic;
+        font-weight: 500;
+        color: grey;
+    }
+
+    h6 {
+        font-size: 15pt;
+        font-style: normal;
+        font-weight: 500;
+        color: grey;
+    }
+}
+
+#neo-logo-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    background-color: #000;
+}
