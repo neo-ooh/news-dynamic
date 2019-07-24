@@ -56,9 +56,8 @@ class App extends Component {
         let d = new Date();
         d.setHours(0, 0, 0, 0)
 
-        // If we are in production, set the key.
-        // if (this.state.production)
-          localStorage.setItem(storageKey, d.getTime())
+        // Set the refresh key.
+        localStorage.setItem(storageKey, d.getTime())
       })
     }
 

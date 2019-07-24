@@ -3,10 +3,10 @@
 @import '_variables';
 @import 'mixins/font-face';
 
-@include font-face(Gotham, "/fonts/Gotham-Light", 300, normal, otf);
-@include font-face(Gotham, "/fonts/Gotham-Book", 500, normal, otf);
-@include font-face(Gotham, "/fonts/Gotham-Medium", 600, normal, otf);
-@include font-face(Gotham, "/fonts/Gotham-Bold", 700, normal, otf);
+@include font-face(Gotham, "../assets/fonts/Gotham-Light", 300, normal, otf);
+@include font-face(Gotham, "../assets/fonts/Gotham-Book", 500, normal, otf);
+@include font-face(Gotham, "../assets/fonts/Gotham-Medium", 600, normal, otf);
+@include font-face(Gotham, "../assets/fonts/Gotham-Bold", 700, normal, otf);
 
 // Scenes
 @import "scenes/Content";
