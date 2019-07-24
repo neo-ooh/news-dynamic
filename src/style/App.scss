@@ -1,12 +1,12 @@
 // MAIN CSS ENTRY POINT
 
 @import '_variables';
-@import 'mixins/font-face';
+@import '~dynamics-utilities/src/sass/mixins/font-face';
 
-@include font-face(Gotham, "../assets/fonts/Gotham-Light", 300, normal, woff2 woff);
-@include font-face(Gotham, "../assets/fonts/Gotham-Book", 500, normal, woff2 woff);
-@include font-face(Gotham, "../assets/fonts/Gotham-Medium", 600, normal, woff2 woff);
-@include font-face(Gotham, "../assets/fonts/Gotham-Bold", 700, normal, woff2 woff);
+@include font-face(Gotham, "~dynamics-utilities/src/fonts/Gotham/Gotham-Light", 300, normal, woff2 woff);
+@include font-face(Gotham, "~dynamics-utilities/src/fonts/Gotham/Gotham-Book", 500, normal, woff2 woff);
+@include font-face(Gotham, "~dynamics-utilities/src/fonts/Gotham/Gotham-Medium", 600, normal, woff2 woff);
+@include font-face(Gotham, "~dynamics-utilities/src/fonts/Gotham/Gotham-Bold", 700, normal, woff2 woff);
 
 // Scenes
 @import "scenes/Content";
