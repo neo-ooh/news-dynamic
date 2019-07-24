@@ -5,8 +5,11 @@ import Content from "./scenes/Content"
 import UpdateCaption from "./scenes/UpdateCaption"
 
 import api from './library/api'
+import { cache } from 'dynamics-utilities'
 import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
+
+import { resolveSupport }  from 'dynamics-utilities'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
@@ -14,19 +17,23 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    cache.setCacheName(process.env.REACT_APP_CACHE_NAME)
+
     const urlParams = (new URLSearchParams(window.location.search))
     api.APIKey = urlParams.get('key')
 
     this.state = {
       display: false,
-      support: this.detectSupport(),
+      support: resolveSupport((new URLSearchParams(window.location.search)).get('support')),
       categories: urlParams.get('categories').split(',').map(Number),
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
+      categoryURL: null,
       records: [],
       run: {
         length: 3,
         records: [],
+        mediaURLs: {},
         step: 0,
         timer: null
       }
@@ -35,40 +42,6 @@ class App extends Component {
 
   componentDidMount() {
     this.checkCache().then(this.updateBackgrounds).then(this.prepareDisplay)
-  }
-
-  supports = [
-    {name: 'FCL', width: '3840', height: '1080', design: 'FCL'},
-    {name: 'DCA', width: '1080', height: '1920', design: 'DCA'},
-  ]
-
-  detectSupport() {
-    const isBroadsignPlayer = typeof window.BroadSignObject !== 'undefined'
-    if (!isBroadsignPlayer) {
-      console.log('This is not a BroadSign Player')
-    }
-
-    // Get the support resolution
-    const supportResolution = isBroadsignPlayer
-      ? window.BroadSignObject.display_unit_resolution
-      : this.props.windowWidth + "x" + this.props.windowHeight
-
-    const supportIndex = this.supports.findIndex(support => supportResolution === (support.width + "x" + support.height))
-
-    if (supportIndex === -1) {
-      const supportParameter = (new URLSearchParams(window.location.search)).get('support')
-      const support = this.supports.find(s => s.name === supportParameter)
-      return support !== undefined ? support : this.supports[0]
-    }
-
-    if(isBroadsignPlayer) {
-      // Link the BroadSignPlay method to react
-      document.getElementById('broadsign-holder')
-        .addEventListener('click', this.beginDisplay)
-
-    }
-
-    return this.supports[supportIndex]
   }
 
   checkCache() {
@@ -141,6 +114,14 @@ class App extends Component {
       category: category
     })
 
+    // prepare category background url
+    cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
+      this.setState({
+        categoryURL: url
+      })
+    )
+
+
     // Load records for this category
     return api.getRecords(this.state.category).then(response => {
       // Get records and sort them from recent to oldest
@@ -178,11 +159,31 @@ class App extends Component {
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
 
+      let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
+
+      // Get the media url from the cache
+      selectedRecords.forEach((record, index) => {
+        if(record.media === null)
+          return // Do nothing if there is no media
+
+        cache.getImage(record.path.replace(/\\\//g, "/")).then(url => {
+          this.setState({
+            run: {
+              ...this.state.run,
+              mediaURLs: {
+                ...this.state.run.mediaURLs,
+                [index]: url
+              }
+            }
+          })
+        })
+      })
+
       // Keep only the first 25 articles in the pool, randomize, and select the run-length first
       return this.setState({
         run: {
           ...this.state.run,
-          records: shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
+          records: selectedRecords
         }
       })
     })
@@ -192,8 +193,6 @@ class App extends Component {
     if(this.state.display) {
       return // Already playing
     }
-
-    console.log(this.state)
 
     this.setState({
       display: true,
@@ -231,7 +230,7 @@ class App extends Component {
       recordDate = moment.tz(record.date, "America/Montreal")
       recordID = record.id
       headline = record.headline
-      media = record.path
+      media = record.media ? this.state.run.mediaURLs[this.state.run.step] : null
     }
 
     return (
@@ -245,7 +244,7 @@ class App extends Component {
         transitionLeave={ true }
         component="main"
         className={ [this.state.support.name, this.state.support.design].join(' ') }
-        style={{background:"url(" + this.state.backgrounds[this.state.category] + ")"}}
+        style={{background:"url(" + this.state.categoryURL + ")"}}
         onClick={ this.beginDisplay }>
         <UpdateCaption
           articleTime={ recordDate }

@@ -1,9 +1,9 @@
-import { get as _get } from './CacheService'
+import { cache } from 'dynamics-utilities'
 
 export default class API {
   // Main function
   static get(path) {
-    return _get(API.baseURL + path + '?key=' + API.APIKey)
+    return cache.getJson(API.baseURL + path + '?key=' + API.APIKey)
   }
 
   static getBackgrounds(support) {
