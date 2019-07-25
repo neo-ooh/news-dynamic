@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+
 import './style/App.scss'
 
 import Content from "./scenes/Content"
@@ -9,9 +11,34 @@ import { cache } from 'dynamics-utilities'
 import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
 
-import { resolveSupport }  from 'dynamics-utilities'
+import { resolveSupport, BroadSignActions }  from 'dynamics-utilities'
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import {IntlProvider, addLocaleData} from 'react-intl'
+import fr from 'react-intl/locale-data/fr'
+import en from 'react-intl/locale-data/en'
+import frenchMessages from './assets/locales/fr-CA'
+import englishMessages from './assets/locales/en-CA'
+
+
+// LOCALIZATION
+const messages = {
+  'fr': frenchMessages,
+  'en': englishMessages,
+}
+
+const categoriesLocales= {
+  '1': 'en',
+  '2': 'en',
+  '3': 'en',
+  '4': 'en',
+  '5': 'en',
+  '6': 'en',
+  '7': 'fr',
+  '8': 'fr',
+  '9': 'fr',
+}
+
+addLocaleData([...fr, ...en])
 
 class App extends Component {
   constructor(props) {
@@ -124,7 +151,9 @@ class App extends Component {
     // Load records for this category
     return api.getRecords(this.state.category).then(response => {
       // Get records and sort them from recent to oldest
-      const records = response.content.records.sort((a, b) => {
+      const records = response.content
+        .reduce((acc, subj) => [...acc, ...subj.records], [])
+        .sort((a, b) => {
         return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1
       })
 
@@ -213,6 +242,14 @@ class App extends Component {
       })
     }
 
+    // We should continue, but do we have another record to display
+    if(this.state.run.step + 1 === this.state.run.records.length) {
+      // No, tell broadsign to stop here as this is not normal behaviour
+      BroadSignActions.stopDisplay()
+      console.warn('No records left to display, stopping here')
+      return
+    }
+
     this.setState({
       run: {
         ...this.state.run,
@@ -232,31 +269,37 @@ class App extends Component {
       media = record.media ? this.state.run.mediaURLs[this.state.run.step] : null
     }
 
+    const locale = this.state.category ? categoriesLocales[this.state.category] : 'en'
+
     return (
-      <ReactCSSTransitionGroup
-        transitionName="transition-article"
-        transitionAppearTimeout={ 750 }
-        transitionEnterTimeout={ 750 }
-        transitionLeaveTimeout={ 750 }
-        transitionAppear={ true }
-        transitionEnter={ true }
-        transitionLeave={ true }
-        component="main"
-        className={ [this.state.support.name, this.state.support.design].join(' ') }
-        style={{background:"url(" + this.state.categoryURL + ")"}}
-        onClick={ this.beginDisplay }>
-        <UpdateCaption
-          articleTime={ recordDate }
-          design={ this.state.support.design }
-          key={ ['caption-', recordID].join() }
-        />
-        <Content
-          headline={ headline }
-          image={ media }
-          design={ this.state.support.design }
-          key={ ['headline-', recordID].join() }
-        />
-      </ReactCSSTransitionGroup>
+      <IntlProvider
+        messages={messages[locale]}
+        locale={locale}>
+        <ReactCSSTransitionGroup
+          transitionName="transition-article"
+          transitionAppearTimeout={ 750 }
+          transitionEnterTimeout={ 750 }
+          transitionLeaveTimeout={ 750 }
+          transitionAppear={ true }
+          transitionEnter={ true }
+          transitionLeave={ true }
+          component="main"
+          className={ [this.state.support.name, this.state.support.design].join(' ') }
+          style={{background:"url(" + this.state.categoryURL + ")"}}
+          onClick={ this.beginDisplay }>
+          <UpdateCaption
+            articleTime={ recordDate }
+            design={ this.state.support.design }
+            key={ ['caption-', recordID].join() }
+          />
+          <Content
+            headline={ headline }
+            image={ media }
+            design={ this.state.support.design }
+            key={ ['headline-', recordID].join() }
+          />
+        </ReactCSSTransitionGroup>
+      </IntlProvider>
     );
   }
 }

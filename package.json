@@ -4,7 +4,6 @@
   "private": true,
   "homepage": "https://news.dynamics.ad-direct.ca/",
   "dependencies": {
-    "axios": "^0.19.0",
     "babel-plugin-react-intl": "^4.1.0",
     "dynamics-utilities": "git+https://git@github.com/neo-traffic/dynamics-utilities.git#dev",
     "moment-timezone": "^0.5.26",
