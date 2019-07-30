@@ -52,7 +52,7 @@ class App extends Component {
     this.state = {
       display: false,
       support: resolveSupport((new URLSearchParams(window.location.search)).get('support')),
-      categories: urlParams.get('categories').split(',').map(Number),
+      categories: urlParams.get('cat').split(',').map(Number),
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
       categoryURL: null,
