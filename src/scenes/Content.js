@@ -11,7 +11,7 @@ class Content extends Component {
     return (
       <section id="news-content" className={this.props.design}>
         { this.props.image &&
-          <div className="image" style={{background: "url(" + this.props.image + ")" }}/>
+          <div className="image" style={{backgroundImage: "url(" + this.props.image + ")" }}/>
         }
         <h1 className={ ['headline', headlineStyle, textSize].join(' ') }>
           <span>{ this.props.headline }</span>

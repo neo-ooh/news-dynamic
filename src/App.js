@@ -44,6 +44,9 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    //Link broadsign
+    document.getElementById('broadsign-holder').addEventListener('click', this.beginDisplay)
+
     cache.setCacheName(process.env.REACT_APP_CACHE_NAME)
 
     const urlParams = (new URLSearchParams(window.location.search))
