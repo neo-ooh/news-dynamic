@@ -119,7 +119,7 @@ class App extends Component {
         backgrounds: backgroundsList
       })
 
-      if (lastUpdate !== null || Date.now() - lastUpdate < process.env.REACT_APP_BACKGROUNDS_REFRESH_RATE) {
+      if (lastUpdate !== null || Date.now() - lastUpdate > process.env.REACT_APP_BACKGROUNDS_REFRESH_RATE) {
         // No need to refresh the backgrounds
         return
       }
@@ -154,11 +154,20 @@ class App extends Component {
     // Load records for this category
     return api.getRecords(this.state.category).then(response => {
       // Get records and sort them from recent to oldest
-      const records = response.content
+      let records = response.content
         .reduce((acc, subj) => [...acc, ...subj.records], [])
         .sort((a, b) => {
-        return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1
-      })
+          return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1
+        }).filter(record => {
+          // filter records as we there will be some that will never be displayed
+          const recordAge = moment.duration(Math.abs(moment().diff(moment.tz(record.date, "America/Montreal"))))
+          return record.media || recordAge.asHours < 6
+        })
+
+      // If the current design is FCL, we do not display records with a horizontal media
+      if (this.state.support.design === 'FCL') {
+        records = records.filter(record => record.media ? record.media_width > record.media_height : true )
+      }
 
       return this.setState({
         records: records,
@@ -298,6 +307,7 @@ class App extends Component {
           <Content
             headline={ headline }
             image={ media }
+            background={ this.state.categoryURL }
             design={ this.state.support.design }
             key={ ['headline-', recordID].join() }
           />

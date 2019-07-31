@@ -13,6 +13,10 @@ class Content extends Component {
         { this.props.image &&
           <div className="image" style={{backgroundImage: "url(" + this.props.image + ")" }}/>
         }
+        {
+          this.props.design === 'FCL' && headlineStyle === 'ribbon' &&
+            <div className="ribbon-background" style={{backgroundImage: "url(" + this.props.background + ")" }} />
+        }
         <h1 className={ ['headline', headlineStyle, textSize].join(' ') }>
           <span>{ this.props.headline }</span>
         </h1>

@@ -2,5 +2,7 @@
   "news.no-headline": "Pas de titre disponible",
   "news.updated-at": "Mis à jour",
   "news.updated-just-now": "À l'instant",
-  "news.updated-x-hours-ago": "Il y a {hours} heures"
+  "news.updated-one-hours-ago": "Il y a une heure",
+  "news.updated-x-hours-ago": "Il y a {hours} heures",
+  "news.updated-x-minutes-ago": "Il y a {age} minutes"
 }

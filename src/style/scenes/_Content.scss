@@ -30,7 +30,19 @@
 
     .image {
       width: 1920px;
-      height: 810px;
+      height: 1080px;
+    }
+
+    .ribbon-background {
+      position: absolute;
+      width: 1920px;
+      height: 272px;
+      right: 0;
+      bottom: 0;
+
+      background-position: bottom right;
+
+      opacity: 0.85;
     }
 
     .headline {
@@ -47,14 +59,20 @@
       }
 
       &.ribbon {
-        height: 270px;
-        margin: -15px 100px 0 100px;
+        position: absolute;
+        width: 1720px;
+        height: 272px;
+        right: 0;
+        bottom: 0;
+        margin: 0 100px;
 
         font-size: 45pt;
         line-height: 280px;
 
+        background-position: bottom right;
+
         &.long-text {
-          margin: 0 5px;
+          margin: -15px 5px 0 5px;
           font-size: 35pt;
         }
       }
@@ -91,6 +109,10 @@
     .image {
       width: 1080px;
       height: 730px;
+    }
+
+    .ribbon-background {
+      display: none;
     }
 
     .headline {

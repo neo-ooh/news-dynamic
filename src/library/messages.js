@@ -11,10 +11,20 @@ export default defineMessages({
     description:'Label present before the update time of the presented record',
     defaultMessage:'Updated',
   },
+  updatedXMinutesAgo: {
+    id:'news.updated-x-minutes-ago',
+    description:'Specify how many minutes ago the article was updated',
+    defaultMessage:'{age} minutes ago',
+  },
   updatedXHoursAgo: {
     id:'news.updated-x-hours-ago',
     description:'Specify how many hours ago the article was updated',
-    defaultMessage:'{hours} hours ago',
+    defaultMessage:'{age} hours ago',
+  },
+  updatedOneHourAgo: {
+    id:'news.updated-one-hours-ago',
+    description:'Tell the article was updated one hour ago',
+    defaultMessage:'One hour ago',
   },
   updatedJustNow: {
     id:'news.updated-just-now',
