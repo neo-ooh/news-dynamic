@@ -234,6 +234,14 @@ class App extends Component {
       return // Already playing
     }
 
+    // Is there anything to show ?
+    if(this.state.run.records.length === 0) {
+      // No, tell broadsign to stop here as this is not normal behaviour
+      BroadSignActions.stopDisplay()
+      console.warn('No records to display, stopping here')
+      return
+    }
+
     this.setState({
       display: true,
       run: {
@@ -244,22 +252,24 @@ class App extends Component {
   }
 
   run = () => {
-    if(this.state.run.step + 1 === this.state.run.length) {
+    // Is there another records to display ?
+    if(this.state.run.step + 1 >= this.state.run.records.length) {
       clearInterval(this.state.run.timer)
+
+      // Are we stopping after the requested nuumber of records ?
+      if(this.state.run.step < this.state.run.length) {
+        // No, tell BroadSign to stop here as this is not normal behaviour
+        BroadSignActions.stopDisplay()
+        console.warn('No records left to display (' + this.state.run.records.length + ' instead of ' + this.state.run.length + '), stopping here')
+        return
+      }
+
       return this.setState({
         run: {
           ...this.state.run,
           timer: null
         }
       })
-    }
-
-    // We should continue, but do we have another record to display
-    if(this.state.run.step + 1 === this.state.run.records.length) {
-      // No, tell broadsign to stop here as this is not normal behaviour
-      BroadSignActions.stopDisplay()
-      console.warn('No records left to display, stopping here')
-      return
     }
 
     this.setState({
