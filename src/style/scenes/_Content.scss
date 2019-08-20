@@ -64,12 +64,17 @@
         height: 272px;
         right: 0;
         bottom: 0;
-        margin: 0 100px;
+        margin: -15px 100px 0;
 
         font-size: 45pt;
         line-height: 280px;
 
         background-position: bottom right;
+
+
+        span {
+          margin-top: -20px;
+        }
 
         &.long-text {
           margin: -15px 5px 0 5px;
@@ -117,11 +122,11 @@
 
     .headline {
       &.ribbon {
-        height: 657px;
-        margin: 0 65px;
+        height: 557px;
+        margin: 80px 65px 0;
 
         font-size: 50pt;
-        line-height: 657px;
+        line-height: 557px;
 
         &.long-text {
           font-size: 40pt;

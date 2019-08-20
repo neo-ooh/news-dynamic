@@ -32,6 +32,8 @@ main {
   left: 0;
   position: absolute;
 
+  background-size: contain;
+
   &.FCL {
     width: 3840px;
     height: 1080px;

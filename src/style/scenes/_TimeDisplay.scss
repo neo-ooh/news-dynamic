@@ -1,7 +1,6 @@
 time {
   position: absolute;
 
-  padding: 50px;
 
   color: rgba(0, 0, 0, .85);
   font-size: 60pt;
@@ -11,6 +10,17 @@ time {
 
   &.FCL {
     right: 1920px;
-    top: -5px;
+    top: -10px;
+
+    padding: 50px;
+  }
+
+  &.DCA {
+    right: 0;
+    top: 1160px;
+
+    color: #FFF;
+    font-size: 30pt;
+    padding: 20px 50px;
   }
 }

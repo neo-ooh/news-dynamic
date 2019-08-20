@@ -11,7 +11,7 @@ import {cache} from 'dynamics-utilities'
 import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
 
-import {resolveSupport, BroadSignActions} from 'dynamics-utilities'
+import {resolveSupport, BroadSignActions, BroadSignData} from 'dynamics-utilities'
 
 import {IntlProvider, addLocaleData} from 'react-intl'
 import fr from 'react-intl/locale-data/fr'
@@ -63,7 +63,7 @@ class App extends Component {
       categoryURL: null,
       records: [],
       run: {
-        length: 3,
+        length: (BroadSignData.displayDuration() || 30000) / 10000,
         records: [],
         mediaURLs: {},
         step: 0,
@@ -163,7 +163,7 @@ class App extends Component {
         }).filter(record => {
           // filter records as we there will be some that will never be displayed
           const recordAge = moment.duration(Math.abs(moment().diff(moment.tz(record.date, "America/Montreal"))))
-          return record.media || recordAge.asHours < 6
+          return record.media || recordAge.asHours() < 6
         })
 
       // If the current design is FCL, we do not display records with a horizontal media
@@ -309,7 +309,7 @@ class App extends Component {
           transitionLeave={ true }
           component="main"
           className={ [this.state.support.name, this.state.support.design].join(' ') }
-          style={ {background: "url(" + this.state.categoryURL + ")"} }
+          style={ {backgroundImage: "url(" + this.state.categoryURL + ")"} }
           onClick={ this.beginDisplay }>
           <TimeDisplay design={ this.state.support.design }/>
           <UpdateCaption

@@ -26,7 +26,7 @@
 
   &.FCL {
     top: 875px;
-    left: 1240px;
+    left: 1300px;
 
     font-size: 30pt;
 
@@ -41,11 +41,10 @@
   }
 
   &.DCA {
-    top: 270px;
-    left: 630px;
+    top: 1185px;
+    left: 30px;
 
     font-size: 30pt;
-    color: #000;
 
     .label {
       font-weight: 300;
@@ -53,6 +52,7 @@
 
     .time {
       font-weight: 600;
+      padding-left: 20px;
     }
   }
 }

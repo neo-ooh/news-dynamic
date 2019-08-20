@@ -8,11 +8,12 @@ class UpdateCaption extends Component {
     if(this.props.articleTime === null)
       return null
 
+
     const now = moment()
-    const articleAge = moment.duration(Math.abs(now.diff(this.props.articleTime)));
+    const articleAge = moment.duration(Math.abs(this.props.articleTime.diff(now)))
 
     // If article is a bit old, do not show its age
-    if(articleAge > 6)
+    if(articleAge.asHours() > 6)
       return null
 
     let articleAgeLitteral = null
@@ -27,16 +28,17 @@ class UpdateCaption extends Component {
     } else {
       // Article more than an hour, show hours
       articleAgeLitteral = articleAgeHours
-      message = articleAgeLitteral === 1 ? messages.updatedOneHourAgo : messages.updatedXMinutesAgo
+      message = articleAgeLitteral === 1 ? messages.updatedOneHourAgo : messages.updatedXHoursAgo
     }
 
     return (
       <section id="update-caption" className={this.props.design}>
         <span className="label">
           { this.props.intl.formatMessage(messages.updatedAt) }
-        </span><br />
+        </span>
+        { this.props.design === 'FCL' && <br /> }
         <span className="time">
-          { this.props.intl.formatMessage(message, {age: Math.floor(articleAge)}) }
+          { this.props.intl.formatMessage(message, {age: Math.floor(articleAge.asHours())}) }
         </span>
       </section>
     )
