@@ -1,0 +1,16 @@
+time {
+  position: absolute;
+
+  padding: 50px;
+
+  color: rgba(0, 0, 0, .85);
+  font-size: 60pt;
+  font-weight: 700;
+  letter-spacing: 1.2pt;
+
+
+  &.FCL {
+    right: 1920px;
+    top: -5px;
+  }
+}

@@ -7,17 +7,19 @@ import Content from "./scenes/Content"
 import UpdateCaption from "./scenes/UpdateCaption"
 
 import api from './library/api'
-import { cache } from 'dynamics-utilities'
+import {cache} from 'dynamics-utilities'
 import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
 
-import { resolveSupport, BroadSignActions }  from 'dynamics-utilities'
+import {resolveSupport, BroadSignActions} from 'dynamics-utilities'
 
 import {IntlProvider, addLocaleData} from 'react-intl'
 import fr from 'react-intl/locale-data/fr'
 import en from 'react-intl/locale-data/en'
 import frenchMessages from './assets/locales/fr-CA'
 import englishMessages from './assets/locales/en-CA'
+
+import TimeDisplay from './scenes/TimeDisplay'
 
 
 // LOCALIZATION
@@ -26,7 +28,7 @@ const messages = {
   'en': englishMessages,
 }
 
-const categoriesLocales= {
+const categoriesLocales = {
   '1': 'en',
   '2': 'en',
   '3': 'en',
@@ -166,7 +168,7 @@ class App extends Component {
 
       // If the current design is FCL, we do not display records with a horizontal media
       if (this.state.support.design === 'FCL') {
-        records = records.filter(record => record.media ? record.media_width > record.media_height : true )
+        records = records.filter(record => record.media ? record.media_width > record.media_height : true)
       }
 
       return this.setState({
@@ -194,7 +196,7 @@ class App extends Component {
       let records = this.state.recordsWithMedia
 
       // filter records to only use ones with images
-      if(records.length < this.state.run.length && this.state.support.name !== 'DCA') {
+      if (records.length < this.state.run.length && this.state.support.name !== 'DCA') {
         // There is not enough records with an image, inject records without images to compensate
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
@@ -203,7 +205,7 @@ class App extends Component {
 
       // Get the media url from the cache
       selectedRecords.forEach((record, index) => {
-        if(record.media === null)
+        if (record.media === null)
           return // Do nothing if there is no media
 
         cache.getImage(record.path.replace(/\\\//g, "/")).then(url => {
@@ -230,12 +232,12 @@ class App extends Component {
   }
 
   beginDisplay = () => {
-    if(this.state.display) {
+    if (this.state.display) {
       return // Already playing
     }
 
     // Is there anything to show ?
-    if(this.state.run.records.length === 0) {
+    if (this.state.run.records.length === 0) {
       // No, tell broadsign to stop here as this is not normal behaviour
       BroadSignActions.stopDisplay()
       console.warn('No records to display, stopping here')
@@ -253,11 +255,11 @@ class App extends Component {
 
   run = () => {
     // Is there another records to display ?
-    if(this.state.run.step + 1 >= this.state.run.records.length) {
+    if (this.state.run.step + 1 >= this.state.run.records.length) {
       clearInterval(this.state.run.timer)
 
       // Are we stopping after the requested nuumber of records ?
-      if(this.state.run.step < this.state.run.length) {
+      if (this.state.run.step < this.state.run.length) {
         // No, tell BroadSign to stop here as this is not normal behaviour
         BroadSignActions.stopDisplay()
         console.warn('No records left to display (' + this.state.run.records.length + ' instead of ' + this.state.run.length + '), stopping here')
@@ -283,7 +285,7 @@ class App extends Component {
   render() {
     let recordDate = null, headline = null, media = null, recordID = null
 
-    if(this.state.display) {
+    if (this.state.display) {
       const record = this.state.run.records[this.state.run.step]
       recordDate = moment.tz(record.date, "America/Montreal")
       recordID = record.id
@@ -295,8 +297,8 @@ class App extends Component {
 
     return (
       <IntlProvider
-        messages={messages[locale]}
-        locale={locale}>
+        messages={ messages[locale] }
+        locale={ locale }>
         <ReactCSSTransitionGroup
           transitionName="transition-article"
           transitionAppearTimeout={ 750 }
@@ -307,8 +309,9 @@ class App extends Component {
           transitionLeave={ true }
           component="main"
           className={ [this.state.support.name, this.state.support.design].join(' ') }
-          style={{background:"url(" + this.state.categoryURL + ")"}}
+          style={ {background: "url(" + this.state.categoryURL + ")"} }
           onClick={ this.beginDisplay }>
+          <TimeDisplay design={ this.state.support.design }/>
           <UpdateCaption
             articleTime={ recordDate }
             design={ this.state.support.design }
