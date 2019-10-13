@@ -70,6 +70,8 @@ class App extends Component {
         timer: null
       }
     }
+
+    console.log(this.state.support)
   }
 
   componentDidMount() {
@@ -309,7 +311,10 @@ class App extends Component {
           transitionLeave={ true }
           component="main"
           className={ [this.state.support.name, this.state.support.design].join(' ') }
-          style={ {backgroundImage: "url(" + this.state.categoryURL + ")"} }
+          style={ {
+            backgroundImage: "url(" + this.state.categoryURL + ")",
+            transform: "scale(" + this.state.support.scale + ")"
+          } }
           onClick={ this.beginDisplay }>
           <TimeDisplay design={ this.state.support.design }/>
           <UpdateCaption
