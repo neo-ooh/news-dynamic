@@ -203,12 +203,12 @@ class App extends Component {
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
 
+      let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
+
       if(selectedRecords.length == 0) {
         // No records to display, skip display
         BroadSignActions.skipDisplay();
       }
-
-      let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
 
       // Get the media url from the cache
       selectedRecords.forEach((record, index) => {
