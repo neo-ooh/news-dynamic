@@ -203,6 +203,11 @@ class App extends Component {
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
 
+      if(selectedRecords.length == 0) {
+        // No records to display, skip display
+        BroadSignActions.skipDisplay();
+      }
+
       let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
 
       // Get the media url from the cache
@@ -260,7 +265,7 @@ class App extends Component {
     if (this.state.run.step + 1 >= this.state.run.records.length) {
       clearInterval(this.state.run.timer)
 
-      // Are we stopping after the requested nuumber of records ?
+      // Are we stopping after the requested number of records ?
       if (this.state.run.step < this.state.run.length) {
         // No, tell BroadSign to stop here as this is not normal behaviour
         BroadSignActions.stopDisplay()
