@@ -205,7 +205,7 @@ class App extends Component {
 
       let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
 
-      if(selectedRecords.length == 0) {
+      if(selectedRecords.length === 0) {
         // No records to display, skip display
         BroadSignActions.skipDisplay();
       }
