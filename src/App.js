@@ -11,7 +11,7 @@ import {cache} from 'dynamics-utilities'
 import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
 
-import {resolveSupport, BroadSignActions, BroadSignData} from 'dynamics-utilities'
+import {resolveDesign, BroadSignActions, BroadSignData} from 'dynamics-utilities'
 
 import {IntlProvider, addLocaleData} from 'react-intl'
 import fr from 'react-intl/locale-data/fr'
@@ -56,7 +56,7 @@ class App extends Component {
 
     this.state = {
       display: false,
-      support: resolveSupport((new URLSearchParams(window.location.search)).get('support')),
+      design: resolveDesign((new URLSearchParams(window.location.search)).get('design')),
       categories: urlParams.get('categories').split(',').map(Number),
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
@@ -71,7 +71,7 @@ class App extends Component {
       }
     }
 
-    console.log(this.state.support)
+    console.log(this.state.design)
   }
 
   componentDidMount() {
@@ -105,7 +105,7 @@ class App extends Component {
     const lastUpdate = localStorage.getItem(storageKey)
 
     // Get the backgrounds for the current support
-    return api.getBackgrounds(this.state.support.name).then(response => {
+    return api.getBackgrounds(this.state.design.name).then(response => {
       const backgroundsList = {}
       const backgroundsUrls = []
       // Store only backgrounds for the current categories
@@ -169,7 +169,7 @@ class App extends Component {
         })
 
       // If the current design is FCL, we do not display records with a horizontal media
-      if (this.state.support.design === 'FCL') {
+      if (this.state.design.name === 'FCL') {
         records = records.filter(record => record.media ? record.media_width > record.media_height : true)
       }
 
@@ -198,7 +198,7 @@ class App extends Component {
       let records = this.state.recordsWithMedia
 
       // filter records to only use ones with images
-      if (records.length < this.state.run.length && this.state.support.name !== 'DCA') {
+      if (records.length < this.state.run.length && this.state.design.name !== 'DCA') {
         // There is not enough records with an image, inject records without images to compensate
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
@@ -266,10 +266,10 @@ class App extends Component {
       clearInterval(this.state.run.timer)
 
       // Are we stopping after the requested number of records ?
-      if (this.state.run.step < this.state.run.length) {
+      if (this.state.run.step + 1 < this.state.run.length) {
         // No, tell BroadSign to stop here as this is not normal behaviour
         BroadSignActions.stopDisplay()
-        console.warn('No records left to display (' + this.state.run.records.length + ' instead of ' + this.state.run.length + '), stopping here')
+        console.warn('No records left to display (' + this.state.run.step + ' instead of ' + this.state.run.length + '), stopping here')
         return
       }
 
@@ -315,23 +315,23 @@ class App extends Component {
           transitionEnter={ true }
           transitionLeave={ true }
           component="main"
-          className={ [this.state.support.name, this.state.support.design].join(' ') }
+          className={ this.state.design.name }
           style={ {
             backgroundImage: "url(" + this.state.categoryURL + ")",
-            transform: "scale(" + this.state.support.scale + ")"
+            transform: "scale(" + this.state.design.scale + ")"
           } }
           onClick={ this.beginDisplay }>
-          <TimeDisplay design={ this.state.support.design }/>
+          <TimeDisplay design={ this.state.design.name }/>
           <UpdateCaption
             articleTime={ recordDate }
-            design={ this.state.support.design }
+            design={ this.state.design.name }
             key={ ['caption-', recordID].join() }
           />
           <Content
             headline={ headline }
             image={ media }
             background={ this.state.categoryURL }
-            design={ this.state.support.design }
+            design={ this.state.design.name }
             key={ ['headline-', recordID].join() }
           />
         </ReactCSSTransitionGroup>

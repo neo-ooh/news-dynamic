@@ -24,6 +24,7 @@ class UpdateCaption extends Component {
     if(articleAgeHours < 1) {
       // Article age is less than an hour, show minutes
       articleAgeLitteral = articleAge.asMinutes()
+      console.log(articleAgeLitteral)
       message = articleAgeLitteral < 10 ? messages.updatedJustNow : messages.updatedXMinutesAgo
     } else {
       // Article more than an hour, show hours
@@ -38,7 +39,7 @@ class UpdateCaption extends Component {
         </span>
         { this.props.design === 'FCL' && <br /> }
         <span className="time">
-          { this.props.intl.formatMessage(message, {age: Math.floor(articleAge.asHours())}) }
+          { this.props.intl.formatMessage(message, {age: Math.floor(articleAgeLitteral)}) }
         </span>
       </section>
     )
