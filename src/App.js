@@ -56,7 +56,7 @@ class App extends Component {
 
     this.state = {
       display: false,
-      design: resolveDesign((new URLSearchParams(window.location.search)).get('design')),
+      design: resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support')),
       categories: urlParams.get('categories').split(',').map(Number),
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
