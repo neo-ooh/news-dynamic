@@ -152,4 +152,58 @@
       }
     }
   }
+
+  &.PMP {
+    width: 570px;
+    height: 945px;
+
+    top: 35px;
+    left: 35px;
+
+    transition-property: left;
+
+    .image {
+      width: 570px;
+      height: 515px;
+    }
+
+    .ribbon-background {
+      display: none;
+    }
+
+    .headline {
+
+      color: #444;
+      
+      &.ribbon {
+        height: 345px;
+        margin: 60px 0 35px;
+
+        font-size: 30pt;
+        line-height: 345px;
+
+        &.long-text {
+          font-size: 20pt;
+        }
+      }
+    }
+
+    &.transition-article-appear,
+    &.transition-article-enter {
+      left: 640px;
+
+      &.transition-article-appear-active,
+      &.transition-article-enter-active {
+        left: 35px;
+      }
+    }
+
+    &.transition-article-leave {
+      left: 35px;
+
+      &.transition-article-leave-active {
+        left: -640px;
+      }
+    }
+  }
 }

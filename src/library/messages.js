@@ -1,6 +1,11 @@
 import { defineMessages } from "react-intl";
 
 export default defineMessages({
+  headlines: {
+    id: 'news.headlines',
+    description: 'Headlines caption shown on Pompe Media screens',
+    defaultMessage: 'Headlines',
+  },
   generateURL: {
     id: 'news.no-headline',
     description: 'Tell the user no headline has been provided to the Content scene',

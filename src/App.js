@@ -13,17 +13,19 @@ import moment from 'moment-timezone'
 
 import {resolveDesign, BroadSignActions, BroadSignData} from 'dynamics-utilities'
 
-import {IntlProvider, addLocaleData} from 'react-intl'
+
+
+// LOCALIZATION
+import {addLocaleData, IntlProvider} from 'react-intl'
 import fr from 'react-intl/locale-data/fr'
 import en from 'react-intl/locale-data/en'
 import frenchMessages from './assets/locales/fr-CA'
 import englishMessages from './assets/locales/en-CA'
 
 import TimeDisplay from './scenes/TimeDisplay'
+import PMPHeadlineBar from './scenes/PMPHeadlineBar'
 
-
-// LOCALIZATION
-const messages = {
+const locales = {
   'fr': frenchMessages,
   'en': englishMessages,
 }
@@ -62,6 +64,7 @@ class App extends Component {
       category: null,
       categoryURL: null,
       records: [],
+      onlyPictures: false,
       run: {
         length: (BroadSignData.displayDuration() || 30000) / 10000,
         records: [],
@@ -69,6 +72,10 @@ class App extends Component {
         step: 0,
         timer: null
       }
+    }
+
+    if(this.state.design !== 'FCL') {
+      this.state.onlyPictures = true
     }
 
     console.log(this.state.design)
@@ -99,6 +106,10 @@ class App extends Component {
   }
 
   updateBackgrounds = () => {
+    if(this.state.design.name === 'PMP') {
+      return
+    }
+
     const storageKey = 'news-dynamic.background-refresh-date'
 
     // Get last update date of the backgrounds
@@ -147,12 +158,14 @@ class App extends Component {
       category: category
     })
 
-    // prepare category background url
-    cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
-      this.setState({
-        categoryURL: url
-      })
-    )
+    if(this.state.design.name !== 'PMP') {
+      // prepare category background url
+      cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
+        this.setState({
+          categoryURL: url
+        })
+      )
+    }
 
 
     // Load records for this category
@@ -168,7 +181,7 @@ class App extends Component {
           return record.media || recordAge.asHours() < 6
         })
 
-      // If the current design is FCL, we do not display records with a horizontal media
+      // If the current design is FCL, we only display records with a horizontal media
       if (this.state.design.name === 'FCL') {
         records = records.filter(record => record.media ? record.media_width > record.media_height : true)
       }
@@ -198,7 +211,7 @@ class App extends Component {
       let records = this.state.recordsWithMedia
 
       // filter records to only use ones with images
-      if (records.length < this.state.run.length && this.state.design.name !== 'DCA') {
+      if (records.length < this.state.run.length && !this.state.onlyPictures) {
         // There is not enough records with an image, inject records without images to compensate
         records.push(...this.state.records.slice(0, this.state.run.length - records.length))
       }
@@ -304,7 +317,7 @@ class App extends Component {
 
     return (
       <IntlProvider
-        messages={ messages[locale] }
+        messages={ locales[locale] }
         locale={ locale }>
         <ReactCSSTransitionGroup
           transitionName="transition-article"
@@ -317,10 +330,14 @@ class App extends Component {
           component="main"
           className={ this.state.design.name }
           style={ {
-            backgroundImage: "url(" + this.state.categoryURL + ")",
+            backgroundImage: this.state.categoryURL ? "url(" + this.state.categoryURL + ")" : "",
             transform: "scale(" + this.state.design.scale + ")"
           } }
           onClick={ this.beginDisplay }>
+          {
+            this.state.design.name === 'PMP' &&
+            <PMPHeadlineBar />
+          }
           <TimeDisplay design={ this.state.design.name }/>
           <UpdateCaption
             articleTime={ recordDate }

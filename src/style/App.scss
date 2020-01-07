@@ -45,4 +45,33 @@ main {
     width: 1080px;
     height: 1920px;
   }
+
+  &.PMP {
+    width: 640px;
+    height: 1080px;
+
+    background-image: url("../assets/images/PMP-Background.png");
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    .headline-bar {
+      box-sizing: border-box;
+
+      position: absolute;
+      top: 550px;
+      left: 35px;
+
+      width: 570px;
+      height: 60px;
+      padding: 2px 8px;
+
+      background-color: #0061a3;
+
+      font-size: 35pt;
+      font-weight: 700;
+      line-height: 60px;
+      text-transform: uppercase;
+    }
+  }
 }
