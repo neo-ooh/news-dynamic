@@ -17,7 +17,7 @@ class Content extends Component {
           this.props.design === 'FCL' && headlineStyle === 'ribbon' &&
             <div className="ribbon-background" style={{backgroundImage: "url(" + this.props.background + ")" }} />
         }
-        <h1 className={ ['headline', headlineStyle, textSize].join(' ') }>
+        <h1 className={ ['headline', headlineStyle, textSize, "c" + this.props.category ].join(' ') }>
           <span>{ this.props.headline }</span>
         </h1>
       </section>
@@ -27,7 +27,8 @@ class Content extends Component {
 
 Content.defaultProps = {
   headline: null,
-  image: null
+  image: null,
+  category: 0,
 }
 
 export default Content

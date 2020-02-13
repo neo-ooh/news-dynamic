@@ -46,6 +46,70 @@ main {
     height: 1920px;
   }
 
+  &.SHD {
+    width: 1920px;
+    height: 1080px;
+
+    .headline-bar {
+      box-sizing: border-box;
+
+      position: absolute;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      height: 95px;
+
+      padding: 10px 20px 10px 40px;
+      background-color: rgba(0, 0, 0, .7);
+
+      color: #FFF;
+      text-transform: uppercase;
+      font-size: 40pt;
+      font-weight: bold;
+      line-height: 80px;
+
+      border-bottom: 8px solid #FFF;
+
+      &.c1 {
+        border-color: rgb(70, 97, 95);
+      }
+
+      &.c2 {
+        border-color: rgb(157, 103, 68);
+      }
+
+      &.c3, &.c4, &.c7 {
+        border-color: rgb(42, 88, 129);
+      }
+
+      &.c5, &.c9 {
+        border-color: rgb(185, 39, 29);
+      }
+
+      &.c6 {
+        border-color: rgb(42, 88, 129);
+      }
+
+      &.c8 {
+        border-color: rgb(0, 93, 112);
+      }
+    }
+
+    .legals {
+      position: absolute;
+      z-index: 100;
+      right: 20px;
+      bottom: 15px;
+      width: 400px;
+      height: 25px;
+
+      background-image: url("../assets/images/SHD-legals-fr.png");
+      background-position: center center;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+
   &.PMP {
     width: 640px;
     height: 1080px;

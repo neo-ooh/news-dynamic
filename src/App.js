@@ -24,6 +24,7 @@ import englishMessages from './assets/locales/en-CA'
 
 import TimeDisplay from './scenes/TimeDisplay'
 import PMPHeadlineBar from './scenes/PMPHeadlineBar'
+import SHDHeadlineBar from './scenes/SHDElements'
 
 const locales = {
   'fr': frenchMessages,
@@ -154,11 +155,13 @@ class App extends Component {
       this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
       this.state.categories[0]
 
+    console.log(category)
+
     this.setState({
       category: category
     })
 
-    if(this.state.design.name !== 'PMP') {
+    if(this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD') {
       // prepare category background url
       cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
         this.setState({
@@ -338,7 +341,14 @@ class App extends Component {
             this.state.design.name === 'PMP' &&
             <PMPHeadlineBar />
           }
-          <TimeDisplay design={ this.state.design.name }/>
+          {
+            this.state.design.name === 'SHD' &&
+            <SHDHeadlineBar category={ this.state.category } />
+          }
+          {
+            this.state.design.name !== 'SHD' &&
+            <TimeDisplay design={ this.state.design.name }/>
+          }
           <UpdateCaption
             articleTime={ recordDate }
             design={ this.state.design.name }
@@ -350,6 +360,7 @@ class App extends Component {
             background={ this.state.categoryURL }
             design={ this.state.design.name }
             key={ ['headline-', recordID].join() }
+            category={ this.state.category }
           />
         </ReactCSSTransitionGroup>
       </IntlProvider>
