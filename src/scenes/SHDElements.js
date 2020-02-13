@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { injectIntl } from 'react-intl'
-import messages from '../library/messages'
 
 const categoryLabels = [
   'National News',
