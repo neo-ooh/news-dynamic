@@ -24,7 +24,6 @@ class UpdateCaption extends Component {
     if(articleAgeHours < 1) {
       // Article age is less than an hour, show minutes
       articleAgeLitteral = articleAge.asMinutes()
-      console.log(articleAgeLitteral)
       message = articleAgeLitteral < 10 ? messages.updatedJustNow : messages.updatedXMinutesAgo
     } else {
       // Article more than an hour, show hours
