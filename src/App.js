@@ -179,13 +179,13 @@ class App extends Component {
         .sort((a, b) => {
           return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1
         }).filter(record => {
-          // filter records as we there will be some that will never be displayed
+          // filter records here as there will be some that will never be displayed
           const recordAge = moment.duration(Math.abs(moment().diff(moment.tz(record.date, "America/Montreal"))))
           return record.media || recordAge.asHours() < 6
         })
 
-      // If the current design is FCL, we only display records with a horizontal media
-      if (this.state.design.name === 'FCL') {
+      // If the current design is FCL oor SHD, we only display records with a horizontal media
+      if (this.state.design.name === 'FCL' || this.state.design.name === 'SHD') {
         records = records.filter(record => record.media ? record.media_width > record.media_height : true)
       }
 
