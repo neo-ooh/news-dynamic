@@ -153,7 +153,8 @@
     }
   }
 
-  &.SHD {
+  &.SHD,
+  &.PHD {
      width: 1920px;
      height: 1080px;
 
@@ -255,17 +256,17 @@
    }
 
   &.PMP {
-    width: 570px;
-    height: 945px;
+    width: 480px;
+    height: 830px;
 
-    top: 35px;
-    left: 35px;
+    top: 250px;
+    left: 0px;
 
     transition-property: opacity;
 
     .image {
-      width: 570px;
-      height: 515px;
+      width: 480px;
+      height: 440px;
     }
 
     .ribbon-background {
@@ -273,15 +274,14 @@
     }
 
     .headline {
-
       color: #444;
 
       &.ribbon {
-        height: 345px;
-        margin: 60px 0 35px;
+        height: 280px;
+        margin: 60px 15px 0;
 
         font-size: 30pt;
-        line-height: 345px;
+        line-height: 280px;
 
         &.long-text {
           font-size: 20pt;

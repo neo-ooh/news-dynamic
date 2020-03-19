@@ -46,7 +46,8 @@ main {
     height: 1920px;
   }
 
-  &.SHD {
+  &.SHD,
+  &.PHD {
     width: 1920px;
     height: 1080px;
 
@@ -111,7 +112,7 @@ main {
   }
 
   &.PMP {
-    width: 640px;
+    width: 480px;
     height: 1080px;
 
     background-image: url("../assets/images/PMP-Background.png");
@@ -119,23 +120,41 @@ main {
     background-position: center center;
     background-repeat: no-repeat;
 
+    background-color: #FFF;
+
     .headline-bar {
       box-sizing: border-box;
 
       position: absolute;
-      top: 550px;
-      left: 35px;
+      top: 690px;
+      left: 0px;
 
-      width: 570px;
+      width: 480px;
       height: 60px;
-      padding: 2px 8px;
+      padding: 2px 15px;
 
-      background-color: #0061a3;
+      background-color: #F38000;
 
-      font-size: 35pt;
+      font-size: 30pt;
       font-weight: 700;
       line-height: 60px;
       text-transform: uppercase;
+    }
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 90px;
+      top: 45px;
+
+      width: 300px;
+      height: 150px;
+
+      background-image: url("../assets/images/onthego.dark.png");
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
   }
 }

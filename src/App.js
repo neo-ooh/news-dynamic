@@ -161,7 +161,7 @@ class App extends Component {
       category: category
     })
 
-    if(this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD') {
+    if(this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD' && this.state.design.name !== 'PHD') {
       // prepare category background url
       cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
         this.setState({
@@ -184,8 +184,8 @@ class App extends Component {
           return record.media || recordAge.asHours() < 6
         })
 
-      // If the current design is FCL oor SHD, we only display records with a horizontal media
-      if (this.state.design.name === 'FCL' || this.state.design.name === 'SHD') {
+      // If the current design is FCL or SHD/PHD, we only display records with a horizontal media
+      if (this.state.design.name === 'FCL' || this.state.design.name === 'SHD' || this.state.design.name === 'PHD') {
         records = records.filter(record => record.media ? record.media_width > record.media_height : true)
       }
 
@@ -342,11 +342,11 @@ class App extends Component {
             <PMPHeadlineBar />
           }
           {
-            this.state.design.name === 'SHD' &&
+            (this.state.design.name === 'SHD' || this.state.design.name === 'PHD') &&
             <SHDHeadlineBar category={ this.state.category } />
           }
           {
-            this.state.design.name !== 'SHD' &&
+            (this.state.design.name !== 'SHD' || this.state.design.name !== 'PHP') &&
             <TimeDisplay design={ this.state.design.name }/>
           }
           <UpdateCaption
