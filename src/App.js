@@ -57,9 +57,14 @@ class App extends Component {
     const urlParams = (new URLSearchParams(window.location.search))
     api.APIKey = urlParams.get('key')
 
+    const design = resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support'), 'FCL')
+    const headlineDisplayDuration = design.name === 'SHD' ? 8000 : 10000;
+
+    console.log(headlineDisplayDuration)
+
     this.state = {
       display: false,
-      design: resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support'), 'FCL'),
+      design: design,
       categories: urlParams.get('categories').split(',').map(Number),
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
@@ -67,7 +72,7 @@ class App extends Component {
       records: [],
       onlyPictures: false,
       run: {
-        length: (BroadSignData.displayDuration() || 30000) / 10000,
+        length: (BroadSignData.displayDuration() || 30000) / headlineDisplayDuration,
         records: [],
         mediaURLs: {},
         step: 0,
@@ -78,8 +83,6 @@ class App extends Component {
     if(this.state.design !== 'FCL') {
       this.state.onlyPictures = true
     }
-
-    console.log(this.state.design)
   }
 
   componentDidMount() {
@@ -154,8 +157,6 @@ class App extends Component {
     const category = this.state.categories.length > 1 ?
       this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
       this.state.categories[0]
-
-    console.log(category)
 
     this.setState({
       category: category
