@@ -58,7 +58,9 @@ class App extends Component {
     api.APIKey = urlParams.get('key')
 
     const design = resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support'), 'FCL')
-    const headlineDisplayDuration = design.name === 'SHD' ? 7500 : 10000;
+    let headlineDisplayDuration = Number(urlParams.get('duration')) * 1000
+    if(headlineDisplayDuration == null)
+      headlineDisplayDuration = design.name === 'SHD' ? 7500 : 10000;
 
     this.state = {
       display: false,
@@ -70,6 +72,7 @@ class App extends Component {
       records: [],
       onlyPictures: false,
       run: {
+        duration: headlineDisplayDuration,
         length: (BroadSignData.displayDuration() || 30000) / headlineDisplayDuration,
         records: [],
         mediaURLs: {},
@@ -270,7 +273,7 @@ class App extends Component {
       display: true,
       run: {
         ...this.state.run,
-        timer: setInterval(this.run, 10 * 1000)
+        timer: setInterval(this.run, this.state.run.duration)
       }
     })
   }
