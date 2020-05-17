@@ -58,9 +58,7 @@ class App extends Component {
     api.APIKey = urlParams.get('key')
 
     const design = resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support'), 'FCL')
-    let headlineDisplayDuration = Number(urlParams.get('duration')) * 1000
-    if(headlineDisplayDuration == null)
-      headlineDisplayDuration = design.name === 'SHD' ? 7500 : 10000;
+    let headlineDisplayDuration = Number(urlParams.get('duration') || (design.name === 'SHD' ? 7.5 : 10)) * 1000
 
     this.state = {
       display: false,
