@@ -16,9 +16,7 @@ import {resolveDesign, BroadSignActions, BroadSignData} from 'dynamics-utilities
 
 
 // LOCALIZATION
-import {addLocaleData, IntlProvider} from 'react-intl'
-import fr from 'react-intl/locale-data/fr'
-import en from 'react-intl/locale-data/en'
+import { IntlProvider } from 'react-intl'
 import frenchMessages from './assets/locales/fr-CA'
 import englishMessages from './assets/locales/en-CA'
 
@@ -42,8 +40,6 @@ const categoriesLocales = {
   '8': 'fr',
   '9': 'fr',
 }
-
-addLocaleData([...fr, ...en])
 
 class App extends Component {
   constructor(props) {
