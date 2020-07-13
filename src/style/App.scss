@@ -103,11 +103,21 @@ main {
       bottom: 15px;
       width: 400px;
       height: 25px;
-
-      background-image: url("../assets/images/SHD-legals-fr.png");
       background-position: center center;
       background-size: contain;
       background-repeat: no-repeat;
+
+      &.shopping {
+        background-image: url("../assets/images/SHD-legals-fr-shopping.png");
+      }
+
+      &.fitness {
+        background-image: url("../assets/images/SHD-legals-fr-fitness.png");
+      }
+
+      &.onthego {
+        background-image: url("../assets/images/SHD-legals-fr-onthego.png");
+      }
     }
   }
 

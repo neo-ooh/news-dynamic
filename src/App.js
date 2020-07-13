@@ -12,9 +12,6 @@ import shuffle from 'shuffle-array'
 import moment from 'moment-timezone'
 
 import {resolveDesign, BroadSignActions, BroadSignData} from 'dynamics-utilities'
-
-
-
 // LOCALIZATION
 import { IntlProvider } from 'react-intl'
 import frenchMessages from './assets/locales/fr-CA'
@@ -60,6 +57,7 @@ class App extends Component {
       display: false,
       design: design,
       categories: urlParams.get('categories').split(',').map(Number),
+      network: urlParams.get('network') || 'shopping',
       backgrounds: {},  // List of available backgrounds { categoryID: background URL }
       category: null,
       categoryURL: null,
@@ -339,7 +337,8 @@ class App extends Component {
           }
           {
             (this.state.design.name === 'SHD' || this.state.design.name === 'PHD') &&
-            <SHDHeadlineBar category={ this.state.category } />
+            <SHDHeadlineBar category={ this.state.category }
+                            network={ this.state.network } />
           }
           {
             (this.state.design.name !== 'SHD' || this.state.design.name !== 'PHP') &&

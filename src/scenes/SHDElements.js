@@ -19,7 +19,7 @@ class PMPHeadlineBar extends Component {
       <div className={ "headline-bar c" + this.props.category } key="headlines">
         { categoryLabels[this.props.category-1] }
       </div>,
-      <div className="legals" key="legals"/>
+      <div className={['legals', this.props.network].join(' ')} key="legals"/>
     ]
   }
 }
