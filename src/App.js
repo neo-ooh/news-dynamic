@@ -107,13 +107,19 @@ class App extends Component {
       return
     }
 
+    let design = this.state.design.name;
+
+    if(design === 'DCA' && this.state.network === 'fitness') {
+      design = 'DCF';
+    }
+
     const storageKey = 'news-dynamic.background-refresh-date'
 
     // Get last update date of the backgrounds
     const lastUpdate = localStorage.getItem(storageKey)
 
     // Get the backgrounds for the current support
-    return api.getBackgrounds(this.state.design.name).then(response => {
+    return api.getBackgrounds(design).then(response => {
       const backgroundsList = {}
       const backgroundsUrls = []
       // Store only backgrounds for the current categories
