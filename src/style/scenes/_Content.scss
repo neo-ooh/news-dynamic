@@ -257,16 +257,16 @@
 
   &.PMP {
     width: 480px;
-    height: 830px;
+    height: 1045px;
 
-    top: 250px;
-    left: 0px;
+    top: 0;
+    left: 0;
 
     transition-property: opacity;
 
     .image {
       width: 480px;
-      height: 440px;
+      height: 600px;
     }
 
     .ribbon-background {

@@ -14,6 +14,30 @@
 @import "scenes/TimeDisplay";
 @import "scenes/UpdatedCaption";
 
+// Greys
+$black           : #000000;
+$grey-1          : #595959;
+$grey-2          : #888888;
+$grey-3          : #BBBBBB;
+$grey-4          : #EEEEEE;
+$grey-5          : #F4F4F5;
+$white           : #FFFFFF;
+
+// Colors
+$dark-blue       : #202035;
+$light-blue      : #0099F8;
+$success         : #00B338;
+$warning         : #FF6300;
+$danger          : #F8002B;
+
+// Aliases
+$dark-grey       : $grey-1;
+$idle-grey       : $grey-2;
+$light-grey      : $grey-3;
+$ultralight-grey : $grey-4;
+
+$info            : $light-blue;
+
 html, body
 {
   margin: 0;
@@ -136,14 +160,14 @@ main {
       box-sizing: border-box;
 
       position: absolute;
-      top: 690px;
-      left: 0px;
+      top: 599px;
+      left: 0;
 
       width: 480px;
       height: 60px;
       padding: 2px 15px;
 
-      background-color: #F38000;
+      background-color: $dark-blue;
 
       font-size: 30pt;
       font-weight: 700;
@@ -151,20 +175,20 @@ main {
       text-transform: uppercase;
     }
 
-    &:before {
-      content: "";
-      display: block;
-      position: absolute;
-      left: 90px;
-      top: 45px;
-
-      width: 300px;
-      height: 150px;
-
-      background-image: url("../assets/images/onthego.dark.png");
-      background-size: contain;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
+    //&:before {
+    //  content: "";
+    //  display: block;
+    //  position: absolute;
+    //  left: 90px;
+    //  top: 45px;
+    //
+    //  width: 300px;
+    //  height: 150px;
+    //
+    //  background-image: url("../assets/images/onthego.dark.png");
+    //  background-size: contain;
+    //  background-position: center center;
+    //  background-repeat: no-repeat;
+    //}
   }
 }

@@ -79,7 +79,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.checkCache().then(this.updateBackgrounds).then(this.prepareDisplay)
+    this.checkCache().then(this.updateBackgrounds).then(this.prepareDisplay).catch(this.prepareDisplay)
   }
 
   checkCache() {
