@@ -221,7 +221,7 @@ class App extends Component {
 
       let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
 
-      if(selectedRecords.length === 0) {
+      if(selectedRecords.length === 0 && this.state.design.name !== 'PMP') {
         // No records to display, skip display
         BroadSignActions.skipDisplay();
       }
@@ -260,7 +260,7 @@ class App extends Component {
     }
 
     // Is there anything to show ?
-    if (this.state.run.records.length === 0) {
+    if (this.state.run.records.length === 0 && this.state.design.name !== 'PMP') {
       // No, tell broadsign to stop here as this is not normal behaviour
       BroadSignActions.stopDisplay()
       console.warn('No records to display, stopping here')
@@ -282,7 +282,7 @@ class App extends Component {
       clearInterval(this.state.run.timer)
 
       // Are we stopping after the requested number of records ?
-      if (this.state.run.step + 1 < this.state.run.length) {
+      if (this.state.run.step + 1 < this.state.run.length && this.state.design.name !== 'PMP') {
         // No, tell BroadSign to stop here as this is not normal behaviour
         BroadSignActions.stopDisplay()
         console.warn('No records left to display (' + this.state.run.step + ' instead of ' + this.state.run.length + '), stopping here')
