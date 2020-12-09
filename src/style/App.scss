@@ -152,6 +152,9 @@ main {
     height           : 1080px;
 
     background-color : $dark-blue;
+    background-image: url("../assets/images/PMP-news.png");
+    background-size: cover;
+    background-position: bottom right;
 
     .headline-bar {
       box-sizing       : border-box;
@@ -165,7 +168,7 @@ main {
       padding          : 2px 15px;
 
       color            : $light-blue;
-      background-color : $dark-blue;
+      background-color : rgba(#000, .25);
 
       font-size        : 30pt;
       font-weight      : 700;
