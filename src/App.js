@@ -331,7 +331,7 @@ class App extends Component {
           transitionEnter={ true }
           transitionLeave={ true }
           component="main"
-          className={ this.state.design.name }
+          className={ [this.state.design.name, locale].join(' ') }
           style={ {
             backgroundImage: this.state.categoryURL ? "url(" + this.state.categoryURL + ")" : "",
             transform: "scale(" + this.state.design.scale + ")"

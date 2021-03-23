@@ -186,10 +186,17 @@ main {
       width               : 430px;
       height              : 50px;
 
-      background-image    : url("../assets/images/PMP-legals-fr.png");
       background-size     : contain;
       background-position : center center;
       background-repeat   : no-repeat;
+    }
+
+    &.fr:after {
+      background-image    : url("../assets/images/PMP-legals-fr.png");
+    }
+
+    &.en:after {
+      background-image    : url("../assets/images/PMP-legals-en.png");
     }
 
     &:before {
