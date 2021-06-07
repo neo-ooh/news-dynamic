@@ -23,8 +23,8 @@
     "react-scripts": "^4.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
+    "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "extract:messages": "react-intl-cra 'src/**/*.{js,jsx}' -o './messages/messages.json' && node ./translationRunner.js"
