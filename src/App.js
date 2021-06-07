@@ -1,3 +1,4 @@
+import { apm, withTransaction }            from '@elastic/apm-rum-react';
 import { BroadSignActions, BroadSignData } from 'dynamics-utilities';
 import { Cache }                           from 'dynamics-utilities/src/library/Cache';
 import { Context }                         from 'dynamics-utilities/src/library/Context';
@@ -89,11 +90,11 @@ class App extends Component {
     this.checkCache()
         .then(this.updateBackgrounds)
         .finally(this.prepareDisplay)
-      .then(() => {
-        if(this.state.ctx.getPlayer() !== 'broadsign') {
-          this.beginDisplay()
-        }
-      })
+        .then(() => {
+          if (this.state.ctx.getPlayer() !== 'broadsign') {
+            this.beginDisplay();
+          }
+        });
   }
 
   checkCache() {
@@ -121,6 +122,8 @@ class App extends Component {
       return;
     }
 
+    const transaction = apm.startTransaction('background-update', 'app-setup-step');
+
     let design = this.state.design.name;
 
     if (design === 'DCA' && this.state.network === 'fitness') {
@@ -139,14 +142,15 @@ class App extends Component {
     const backgroundsRequest = this.api.prepareRoute(routes.backgrounds.list, {
       network   : this.state.ctx.getParam('network'),
       format_id : this.state.ctx.getParam('format_id'),
-      categories: this.state.categories
+      categories: this.state.categories,
     });
 
+    transaction.mark('request-backgrounds-list');
     return fetch(backgroundsRequest).then(async response => {
       const backgroundsList = {};
       const backgroundsUrls = [];
 
-      const resp = await response.json()
+      const resp = await response.json();
 
       // Store only backgrounds for the current categories
       resp.content.forEach(bckg => {
@@ -165,22 +169,28 @@ class App extends Component {
 
       if (lastUpdate !== null || Date.now() - lastUpdate > process.env.REACT_APP_BACKGROUNDS_REFRESH_RATE) {
         // No need to refresh the backgrounds
+
+        transaction.end();
         return;
       }
 
       // Backgrounds needs to be refreshed.
-      caches.open(process.env.REACT_APP_CACHE_NAME).then(cache => {
-        cache.addAll(backgroundsUrls.map(url => this.api.prepareUrl(url)));
+      caches.open(process.env.REACT_APP_CACHE_NAME).then(async cache => {
+        transaction.mark('start-fetching-backgrounds');
+        await cache.addAll(backgroundsUrls.map(url => this.api.prepareUrl(url)));
+        transaction.mark('backgrounds-fetching-done');
+
         localStorage.setItem(storageKey, Date.now().toString());
-      });
+      }).finally(() => transaction.end());
     });
   };
 
   prepareDisplay = async () => {
+    const transaction = apm.startTransaction('prepare-display', 'app-setup-step');
     // set category to display
-    const category = this.state.categories.length > 1 ?
-                     this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
-                     this.state.categories[0];
+    const category    = this.state.categories.length > 1 ?
+                        this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
+                        this.state.categories[0];
 
     this.setState({
       category: category,
@@ -189,22 +199,27 @@ class App extends Component {
     const cache = (new Cache(process.env.REACT_APP_CACHE_NAME));
 
     if (this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD' && this.state.design.name !== 'PHD') {
+
+      const backgroundSpan = transaction.startSpan('background-loading');
       // prepare category background url
       cache.get(this.state.backgrounds[this.state.category], (url) => fetch(this.api.prepareUrl(url)))
            .then(response => response.blob())
            .then(blob => URL.createObjectURL(blob))
-           .then(blobUrl =>
-             this.setState({
-               categoryURL: blobUrl,
-             }),
+           .then(blobUrl => {
+               backgroundSpan.end();
+               this.setState({
+                 categoryURL: blobUrl,
+               });
+             },
            );
     }
 
-
+    const recordsSpan = transaction.startSpan('records-fetching')
     // Load records for this category
     const recordsRequest = this.api.prepareRoute(routes.records.list, {
       category: this.state.category,
     });
+
     return fetch(recordsRequest).then(async (response) => {
       // Get records and sort them from recent to oldest
       let records = (await response.json())
@@ -222,10 +237,13 @@ class App extends Component {
         records = records.filter(record => record.media ? record.media_width > record.media_height : true);
       }
 
+      recordsSpan.end();
+
       return this.setState({
         records         : records,
         recordsWithMedia: records.filter(record => record.media !== null),
       }, () => {
+        const mediaSpan = transaction.startSpan('media-loading')
         // Load the records medias
         const mediaUrls = this.state.recordsWithMedia
                               .map(record => record.media_url)
@@ -239,6 +257,7 @@ class App extends Component {
                 cache.add(url);
               }
             });
+            mediaSpan.end()
           }),
         );
       });
@@ -280,6 +299,8 @@ class App extends Component {
                });
              });
       });
+
+      transaction.end();
 
       // Keep only the first 25 articles in the pool, randomize, and select the run-length first
       return this.setState({
@@ -410,4 +431,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withTransaction('news', 'dynamic-root')(App);
