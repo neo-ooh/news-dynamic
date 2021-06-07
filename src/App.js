@@ -1,4 +1,4 @@
-import { apm, withTransaction }            from '@elastic/apm-rum';
+import { apm }            from '@elastic/apm-rum';
 import { BroadSignActions, BroadSignData } from 'dynamics-utilities';
 import { Cache }                           from 'dynamics-utilities/src/library/Cache';
 import { Context }                         from 'dynamics-utilities/src/library/Context';
@@ -431,4 +431,4 @@ class App extends Component {
   }
 }
 
-export default withTransaction('news', 'dynamic-root')(App);
+export default App;
