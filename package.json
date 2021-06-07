@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://news.dynamics.ad-direct.ca/",
   "dependencies": {
+    "@elastic/apm-rum": "^5.8.0",
     "babel-plugin-formatjs": "^10.2.17",
     "dynamics-utilities": "git+https://git@github.com/neo-traffic/dynamics-utilities.git#dev",
     "moment-timezone": "^0.5.33",
