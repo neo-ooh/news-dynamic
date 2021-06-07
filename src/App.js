@@ -1,30 +1,36 @@
-import React, {Component} from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { BroadSignActions, BroadSignData } from 'dynamics-utilities';
+import { Cache }                           from 'dynamics-utilities/src/library/Cache';
+import { Context }                         from 'dynamics-utilities/src/library/Context';
+import moment                              from 'moment-timezone';
+import React, { Component }                from 'react';
+import ReactCSSTransitionGroup             from 'react-addons-css-transition-group';
 
-import './style/App.scss'
-
-import Content from "./scenes/Content"
-import UpdateCaption from "./scenes/UpdateCaption"
-
-import api from './library/api'
-import {cache} from 'dynamics-utilities'
-import shuffle from 'shuffle-array'
-import moment from 'moment-timezone'
-
-import {resolveDesign, BroadSignActions, BroadSignData} from 'dynamics-utilities'
 // LOCALIZATION
-import { IntlProvider } from 'react-intl'
-import frenchMessages from './assets/locales/fr-CA'
-import englishMessages from './assets/locales/en-CA'
+import { IntlProvider } from 'react-intl';
+import englishMessages  from './assets/locales/en-CA';
+import frenchMessages   from './assets/locales/fr-CA';
 
-import TimeDisplay from './scenes/TimeDisplay'
-import PMPHeadlineBar from './scenes/PMPHeadlineBar'
-import SHDHeadlineBar from './scenes/SHDElements'
+import API    from './library/api';
+import routes from './library/routes';
+
+import Content        from './scenes/Content';
+import PMPHeadlineBar from './scenes/PMPHeadlineBar';
+import SHDHeadlineBar from './scenes/SHDElements';
+
+import TimeDisplay   from './scenes/TimeDisplay';
+import UpdateCaption from './scenes/UpdateCaption';
+
+import './style/App.scss';
 
 const locales = {
   'fr': frenchMessages,
   'en': englishMessages,
+};
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
 }
+
 
 const categoriesLocales = {
   '1': 'en',
@@ -36,287 +42,322 @@ const categoriesLocales = {
   '7': 'fr',
   '8': 'fr',
   '9': 'fr',
-}
+};
 
 class App extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     //Link broadsign
-    document.getElementById('broadsign-holder').addEventListener('click', this.beginDisplay)
+    document.getElementById('broadsign-holder').addEventListener('click', this.beginDisplay);
 
-    cache.setCacheName(process.env.REACT_APP_CACHE_NAME)
+    const ctx    = new Context();
+    const design = ctx.getSupport('HD');
 
-    const urlParams = (new URLSearchParams(window.location.search))
-    api.APIKey = urlParams.get('key')
+    this.api = new API(process.env.REACT_APP_API_URL, ctx.getParam('key'));
 
-    const design = resolveDesign((new URLSearchParams(window.location.search)).get('design') || (new URLSearchParams(window.location.search)).get('support'), 'FCL')
-    let headlineDisplayDuration = Number(urlParams.get('duration') || (design.name === 'SHD' ? 7.5 : 10)) * 1000
+    let headlineDisplayDuration = Number(ctx.getParam('duration') || (design.name === 'SHD' ? 7.5 : 10)) * 1000;
 
     this.state = {
-      display: false,
-      design: design,
-      categories: urlParams.get('categories').split(',').map(Number),
-      network: urlParams.get('network') || 'shopping',
-      backgrounds: {},  // List of available backgrounds { categoryID: background URL }
-      category: null,
-      categoryURL: null,
-      records: [],
+      ctx         : ctx,
+      apiToken    : ctx.getParam('key'),
+      display     : false,
+      design      : design,
+      categories  : ctx.getParam('categories').split(',').map(Number),
+      network     : ctx.getParam('network') || 'shopping',
+      backgrounds : {},  // List of available backgrounds { categoryID: background URL }
+      category    : null,
+      categoryURL : null,
+      records     : [],
       onlyPictures: false,
-      run: {
-        duration: headlineDisplayDuration,
-        length: (BroadSignData.displayDuration() || 30000) / headlineDisplayDuration,
-        records: [],
+      run         : {
+        duration : headlineDisplayDuration,
+        length   : (BroadSignData.displayDuration() || 30000) / headlineDisplayDuration,
+        records  : [],
         mediaURLs: {},
-        step: 0,
-        timer: null
-      }
-    }
+        step     : 0,
+        timer    : null,
+      },
+    };
 
-    if(this.state.design !== 'FCL') {
-      this.state.onlyPictures = true
+    if (this.state.design !== 'FCL') {
+      this.state.onlyPictures = true;
     }
   }
 
   componentDidMount() {
-    this.checkCache().then(this.updateBackgrounds).then(this.prepareDisplay).catch(this.prepareDisplay)
+    this.checkCache()
+        .then(this.updateBackgrounds)
+        .finally(this.prepareDisplay)
+      .then(() => {
+        if(this.state.ctx.getPlayer() !== 'broadsign') {
+          this.beginDisplay()
+        }
+      })
   }
 
   checkCache() {
-    const storageKey = 'news-dynamic.cache-cleanup-date'
+    const storageKey = 'news-dynamic.cache-cleanup-date';
     // Check cache state and erase if new day
-    const lastUpdate = localStorage.getItem(storageKey)
+    const lastUpdate = localStorage.getItem(storageKey);
 
     if (lastUpdate === null || Date.now() - lastUpdate > process.env.REACT_APP_FULL_CACHE_REFRESH_RATE) {
       // Cache is too old
       return caches.delete(process.env.REACT_APP_CACHE_NAME).then(() => {
         // Set the refresh date as midnight to prevent slipping
         let d = new Date();
-        d.setHours(0, 0, 0, 0)
+        d.setHours(0, 0, 0, 0);
 
         // Set the refresh key.
-        localStorage.setItem(storageKey, d.getTime())
-      })
+        localStorage.setItem(storageKey, d.getTime());
+      });
     }
 
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   updateBackgrounds = () => {
-    if(this.state.design.name === 'PMP') {
-      return
+    if (this.state.design.name === 'PMP') {
+      return;
     }
 
     let design = this.state.design.name;
 
-    if(design === 'DCA' && this.state.network === 'fitness') {
+    if (design === 'DCA' && this.state.network === 'fitness') {
       design = 'DCF';
     }
 
-    const storageKey = 'news-dynamic.background-refresh-date'
+    const storageKey = 'news-dynamic.background-refresh-date';
 
     // Get last update date of the backgrounds
-    const lastUpdate = localStorage.getItem(storageKey)
+    const lastUpdate = localStorage.getItem(storageKey);
 
     // Get the backgrounds for the current support
-    return api.getBackgrounds(design).then(response => {
-      const backgroundsList = {}
-      const backgroundsUrls = []
+    /**
+     * @var {Request} backgroundsRequest
+     */
+    const backgroundsRequest = this.api.prepareRoute(routes.backgrounds.list, {
+      network   : this.state.ctx.getParam('network'),
+      format_id : this.state.ctx.getParam('format_id'),
+      categories: this.state.categories
+    });
+
+    return fetch(backgroundsRequest).then(async response => {
+      const backgroundsList = {};
+      const backgroundsUrls = [];
+
+      const resp = await response.json()
+
       // Store only backgrounds for the current categories
-      response.content.forEach(bckg => {
+      resp.content.forEach(bckg => {
         if (this.state.categories.includes(bckg.category.id)) {
           // Add to cache
-          const path = bckg.path.replace(/\\\//g, "/")
-          backgroundsList[bckg.category.id] = path
-          backgroundsUrls.push(path)
+          const path                        = bckg.path.replace(/\\\//g, '/');
+          backgroundsList[bckg.category.id] = path;
+          backgroundsUrls.push(path);
         }
-      })
+      });
 
       // Add them to the state
       this.setState({
-        backgrounds: backgroundsList
-      })
+        backgrounds: backgroundsList,
+      });
 
       if (lastUpdate !== null || Date.now() - lastUpdate > process.env.REACT_APP_BACKGROUNDS_REFRESH_RATE) {
         // No need to refresh the backgrounds
-        return
+        return;
       }
 
       // Backgrounds needs to be refreshed.
       caches.open(process.env.REACT_APP_CACHE_NAME).then(cache => {
-        cache.addAll(backgroundsUrls)
+        cache.addAll(backgroundsUrls.map(url => this.api.prepareUrl(url)));
+        localStorage.setItem(storageKey, Date.now().toString());
+      });
+    });
+  };
 
-        localStorage.setItem(storageKey, Date.now().toString())
-      })
-    })
-  }
-
-  prepareDisplay = () => {
+  prepareDisplay = async () => {
     // set category to display
     const category = this.state.categories.length > 1 ?
-      this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
-      this.state.categories[0]
+                     this.state.categories[Math.floor(Math.random() * this.state.categories.length)] :
+                     this.state.categories[0];
 
     this.setState({
-      category: category
-    })
+      category: category,
+    });
 
-    if(this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD' && this.state.design.name !== 'PHD') {
+    const cache = (new Cache(process.env.REACT_APP_CACHE_NAME));
+
+    if (this.state.design.name !== 'PMP' && this.state.design.name !== 'SHD' && this.state.design.name !== 'PHD') {
       // prepare category background url
-      cache.getImage(this.state.backgrounds[this.state.category]).then(url =>
-        this.setState({
-          categoryURL: url
-        })
-      )
+      cache.get(this.state.backgrounds[this.state.category], (url) => fetch(this.api.prepareUrl(url)))
+           .then(response => response.blob())
+           .then(blob => URL.createObjectURL(blob))
+           .then(blobUrl =>
+             this.setState({
+               categoryURL: blobUrl,
+             }),
+           );
     }
 
 
     // Load records for this category
-    return api.getRecords(this.state.category).then(response => {
+    const recordsRequest = this.api.prepareRoute(routes.records.list, {
+      category: this.state.category,
+    });
+    return fetch(recordsRequest).then(async (response) => {
       // Get records and sort them from recent to oldest
-      let records = response.content
-        .reduce((acc, subj) => [...acc, ...subj.records], [])
+      let records = (await response.json())
+        .content
         .sort((a, b) => {
-          return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1
+          return (new Date(a.date)).getTime() > (new Date(b.date)).getTime() ? -1 : 1;
         }).filter(record => {
           // filter records here as there will be some that will never be displayed
-          const recordAge = moment.duration(Math.abs(moment().diff(moment.tz(record.date, "America/Montreal"))))
-          return record.media || recordAge.asHours() < 6
-        })
+          const recordAge = moment.duration(Math.abs(moment().diff(moment.tz(record.date, 'America/Montreal'))));
+          return record.media || recordAge.asHours() < 6;
+        });
 
       // If the current design is FCL or SHD/PHD, we only display records with a horizontal media
       if (this.state.design.name === 'FCL' || this.state.design.name === 'SHD' || this.state.design.name === 'PHD') {
-        records = records.filter(record => record.media ? record.media_width > record.media_height : true)
+        records = records.filter(record => record.media ? record.media_width > record.media_height : true);
       }
 
       return this.setState({
-        records: records,
-        recordsWithMedia: records.filter(record => record.media !== null)
+        records         : records,
+        recordsWithMedia: records.filter(record => record.media !== null),
       }, () => {
         // Load the records medias
         const mediaUrls = this.state.recordsWithMedia
-          .map(record => record.path)
-          .map(path => path.replace(/\\\//g, "/"))
+                              .map(record => record.media_url)
+                              .map(path => path.replace(/\\\//g, '/'));
 
         return caches.open(process.env.REACT_APP_CACHE_NAME).then(cache =>
           cache.keys().then(keys => {
-            const keysUrls = keys.map(key => key.url)
+            const keysUrls = keys.map(key => key.url);
             mediaUrls.forEach(url => {
               if (!keysUrls.includes(url)) {
-                cache.add(url)
+                cache.add(url);
               }
-            })
-          })
-        )
-      })
+            });
+          }),
+        );
+      });
     }).then(() => {
       // Select the record to display
-      let records = this.state.recordsWithMedia
+      let records = this.state.recordsWithMedia;
 
       // filter records to only use ones with images
       if (records.length < this.state.run.length && !this.state.onlyPictures) {
         // There is not enough records with an image, inject records without images to compensate
-        records.push(...this.state.records.slice(0, this.state.run.length - records.length))
+        records.push(...this.state.records.slice(0, this.state.run.length - records.length));
       }
 
-      let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length)
+      let selectedRecords = shuffle(records.slice(0, 12)).slice(0, this.state.run.length);
 
-      if(selectedRecords.length === 0) {
+      if (selectedRecords.length === 0) {
         // No records to display, skip display
         BroadSignActions.skipDisplay();
       }
 
       // Get the media url from the cache
       selectedRecords.forEach((record, index) => {
-        if (record.media === null)
-          return // Do nothing if there is no media
+        if (record.media === null) {
+          return; // Do nothing if there is no media
+        }
 
-        cache.getImage(record.path.replace(/\\\//g, "/")).then(url => {
-          this.setState({
-            run: {
-              ...this.state.run,
-              mediaURLs: {
-                ...this.state.run.mediaURLs,
-                [index]: url
-              }
-            }
-          })
-        })
-      })
+        cache.get(record.media_url.replace(/\\\//g, '/'), url => fetch(this.api.prepareUrl(url)))
+             .then(response => response.blob())
+             .then(blob => URL.createObjectURL(blob))
+             .then(url => {
+               this.setState({
+                 run: {
+                   ...this.state.run,
+                   mediaURLs: {
+                     ...this.state.run.mediaURLs,
+                     [index]: url,
+                   },
+                 },
+               });
+             });
+      });
 
       // Keep only the first 25 articles in the pool, randomize, and select the run-length first
       return this.setState({
         run: {
           ...this.state.run,
-          records: selectedRecords
-        }
-      })
-    })
-  }
+          records: selectedRecords,
+        },
+      });
+    });
+  };
 
   beginDisplay = () => {
     if (this.state.display) {
-      return // Already playing
+      return; // Already playing
     }
 
     // Is there anything to show ?
     if (this.state.run.records.length === 0) {
       // No, tell broadsign to stop here as this is not normal behaviour
-      BroadSignActions.stopDisplay()
-      console.warn('No records to display, stopping here')
-      return
+      BroadSignActions.stopDisplay();
+      console.warn('No records to display, stopping here');
+      return;
     }
 
     this.setState({
       display: true,
-      run: {
+      run    : {
         ...this.state.run,
-        timer: setInterval(this.run, this.state.run.duration)
-      }
-    })
-  }
+        timer: setInterval(this.run, this.state.run.duration),
+      },
+    });
+  };
 
   run = () => {
     // Is there another records to display ?
     if (this.state.run.step + 1 >= this.state.run.records.length) {
-      clearInterval(this.state.run.timer)
+      clearInterval(this.state.run.timer);
 
       // Are we stopping after the requested number of records ?
       if (this.state.run.step + 1 < this.state.run.length) {
         // No, tell BroadSign to stop here as this is not normal behaviour
-        BroadSignActions.stopDisplay()
-        console.warn('No records left to display (' + this.state.run.step + ' instead of ' + this.state.run.length + '), stopping here')
-        return
+        BroadSignActions.stopDisplay();
+        console.warn('No records left to display (' +
+          this.state.run.step +
+          ' instead of ' +
+          this.state.run.length +
+          '), stopping here');
+        return;
       }
 
       return this.setState({
         run: {
           ...this.state.run,
-          timer: null
-        }
-      })
+          timer: null,
+        },
+      });
     }
 
     this.setState({
       run: {
         ...this.state.run,
-        step: this.state.run.step + 1
-      }
-    })
-  }
+        step: this.state.run.step + 1,
+      },
+    });
+  };
 
   render() {
-    let recordDate = null, headline = null, media = null, recordID = null
+    let recordDate = null, headline = null, media = null, recordID = null;
 
     if (this.state.display) {
-      const record = this.state.run.records[this.state.run.step]
-      recordDate = moment.tz(record.date, "America/Montreal")
-      recordID = record.id
-      headline = record.headline
-      media = record.media ? this.state.run.mediaURLs[this.state.run.step] : null
+      const record = this.state.run.records[this.state.run.step];
+      recordDate   = moment.tz(record.date, 'America/Montreal');
+      recordID     = record.id;
+      headline     = record.headline;
+      media        = record.media ? this.state.run.mediaURLs[this.state.run.step] : null;
     }
 
-    const locale = this.state.category ? categoriesLocales[this.state.category] : 'en'
+    const locale = this.state.category ? categoriesLocales[this.state.category] : 'en';
 
     return (
       <IntlProvider
@@ -331,20 +372,20 @@ class App extends Component {
           transitionEnter={ true }
           transitionLeave={ true }
           component="main"
-          className={ [this.state.design.name, locale].join(' ') }
+          className={ [ this.state.design.name, locale ].join(' ') }
           style={ {
-            backgroundImage: this.state.categoryURL ? "url(" + this.state.categoryURL + ")" : "",
-            transform: "scale(" + this.state.design.scale + ")"
+            backgroundImage: this.state.categoryURL ? 'url(' + this.state.categoryURL + ')' : '',
+            transform      : 'scale(' + this.state.design.scale + ')',
           } }
           onClick={ this.beginDisplay }>
           {
             this.state.design.name === 'PMP' &&
-            <PMPHeadlineBar />
+            <PMPHeadlineBar/>
           }
           {
             (this.state.design.name === 'SHD' || this.state.design.name === 'PHD') &&
             <SHDHeadlineBar category={ this.state.category }
-                            network={ this.state.network } />
+                            network={ this.state.network }/>
           }
           {
             (this.state.design.name !== 'SHD' || this.state.design.name !== 'PHP') &&
@@ -353,14 +394,14 @@ class App extends Component {
           <UpdateCaption
             articleTime={ recordDate }
             design={ this.state.design.name }
-            key={ ['caption-', recordID].join() }
+            key={ [ 'caption-', recordID ].join() }
           />
           <Content
             headline={ headline }
             image={ media }
             background={ this.state.categoryURL }
             design={ this.state.design.name }
-            key={ ['headline-', recordID].join() }
+            key={ [ 'headline-', recordID ].join() }
             category={ this.state.category }
           />
         </ReactCSSTransitionGroup>
