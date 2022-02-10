@@ -7,7 +7,7 @@
     "babel-plugin-react-intl": "^4.3.0",
     "dynamics-utilities": "git+https://git@github.com/neo-traffic/dynamics-utilities.git#dev",
     "moment-timezone": "^0.5.28",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "querystring": "^0.2.0",
     "react": "^16.13.1",
     "react-addons-css-transition-group": "^15.6.2",
